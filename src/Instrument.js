@@ -155,13 +155,12 @@ export const decorateField = (fn, fieldInfo) => {
         resolverReport.resultUndefined = true;
       } else if (typeof result.then === 'function') {
         // single Promise
-        result.then((res) => {
-          finishRun();
-          return res;
-        }).catch((err) => {
+        //
+        // don’t throw from this promise, because it’s not one that the app
+        // gets to handle, instead it operates on the original promise.
+        result.then(finishRun).catch(() => {
           resolverReport.error = true;
           finishRun();
-          throw err;
         });
         // exit early so we do not hit the default return.
         return result;
@@ -175,14 +174,13 @@ export const decorateField = (fn, fieldInfo) => {
             promises.push(value);
           }
         });
-        // if there are Promises in the array, fire when the are all done.
+        // if there are Promises in the array, fire when they are all done.
         if (promises.length > 0) {
-          Promise.all(promises).then(() => {
-            finishRun();
-          }).catch((err) => {
+          // don’t throw from this promise, because it’s not one that the app
+          // gets to handle, instead it operates on the original promise.
+          Promise.all(promises).then(finishRun).catch(() => {
             resolverReport.error = true;
             finishRun();
-            throw err;
           });
           // exit early so we do not hit the default return.
           return result;

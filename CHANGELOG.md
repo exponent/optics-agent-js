@@ -1,5 +1,8 @@
 # Change log
 
+### master
+* Fix an issue that introduced promises that would throw but the app could not handle.
+
 ### 1.0.3
 * Support `HTTPS_PROXY` and a proxyUrl option.
 
